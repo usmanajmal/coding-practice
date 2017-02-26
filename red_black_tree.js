@@ -4,7 +4,7 @@
  *      1. Each node will be colored red or black
  *      2. Root must always be black
  *      3. Leaf null node will be colored as black
- *      3. A red node must have no red children or a red parent 
+ *      3. A red node must have no red children or a red parent
  *         otherwise it will be termed as a "red-violation"
  *      4. Every path from root to null leaf node must have same
  *         number of black nodes (also known as black-height),
@@ -36,7 +36,7 @@ let Node = function (value, color, parent, left, right) {
     _self.color = color;
     _self.parent = parent || null;
     _self.left = left || null;
-    _self.right = right || null; 
+    _self.right = right || null;
 }
 
 RedBlackTree.prototype = {
@@ -63,7 +63,7 @@ RedBlackTree.prototype = {
         // Corner Case: If root is empty, make the new node root and blacken the root
         if (_self.root === null) {
             _self.root = node;
-            node.color = color.RedBlackTree
+            node.color = color.BLACK
             return;
         }
 
@@ -93,26 +93,28 @@ RedBlackTree.prototype = {
         }
 
         // Stage 2: Balance the tree
-        
-        // Case 1: Fix red-violation, if any. 
-        // If uncle of node is red, flip colors of parent, grand parent and uncle
 
         let parent = node.parent, grandParent = parent.parent, uncle;
         if (grandParent) {
-            uncle = (parent.value < grandParent.value) ? grandParent.right : grandParent.left; 
+            uncle = (parent.value < grandParent.value) ? grandParent.right : grandParent.left;
 
+            // Case 1: Fix red-violation, if any.
+            // If uncle of node is red, flip colors of parent, grand parent and uncle
             if (uncle && uncle.color === color.RED) {
-                uncle.color = color.RED;
-                node.color = (node.color === color.RED) ? color.BLACK : color.RED;
+                uncle.color = color.BLACK;
+                grandParent.color = (grandParent.color === color.RED) ? color.BLACK : color.RED;
                 parent.color = (parent.color === color.RED) ? color.BLACK : color.RED;
             }
-        }
 
-        // Case 2: Fix black-violation, if any.
-        // If uncle of node is black, then follow Case 2a and Case 2b given dealt with
-        // separately by helper function rotate()
-        if (uncle && uncle.color === color.RedBlackTree) {
-            _self.rotate(node);
+            // Case 2: Fix black-violation, if any.
+            // If uncle of node is black, then follow Case 2a and Case 2b given dealt with
+            // separately by helper function rotate()
+            else if (uncle === null || (uncle && uncle.color === color.BLACK)) {
+                _self.rotate(node);
+
+                // Set color of root to Black
+                _self.root.color = color.BLACK;
+            }
         }
     },
     /**
@@ -150,7 +152,7 @@ RedBlackTree.prototype = {
             parent = node;
             node = parent.left;
         }
-        
+
         // Case 2b: node is left-child of a right-child
         if (parent.value > grandParent.value && node.value < parent.value) {
             // Rotate around parent
@@ -164,36 +166,36 @@ RedBlackTree.prototype = {
             parent = node;
             node = parent.right;
         }
-        
+
         // Case 3a: node is left-child of a left-child
         if (parent.value < grandParent.value && node.value < parent.value) {
             // Rotate aroung grand parent
             parent.parent = grandParent.parent;
-            parent.right = grandParent;
             grandParent.left = parent.right;
+            parent.right = grandParent;
         }
 
         // Case 3b: node is right-child of a right-child
         if (parent.value > grandParent.value && node.value > parent.value) {
             // Rotate aroung grand parent
             parent.parent = grandParent.parent;
-            parent.left = grandParent;
             grandParent.right = parent.left;
+            parent.left = grandParent;
         }
 
         // Update great grand parent left or right child
         let greatGrandParent = grandParent.parent;
-        if (!greatGrandParent && parent.value < greatGrandParent.value ) {
+        if (greatGrandParent && parent.value < greatGrandParent.value ) {
             greatGrandParent.left = parent;
         }
-        else if (!greatGrandParent && parent.value > greatGrandParent.value ) {
+        else if (greatGrandParent && parent.value > greatGrandParent.value ) {
             greatGrandParent.right = parent;
         }
 
         // Flip colors of parent and grand parent
         parent.color = (parent.color === color.RED) ? color.BLACK : color.RED;
         grandParent.color = (grandParent.color === color.RED) ? color.BLACK : color.RED;
-    
+
         // Update root if parent is now at root
         if (grandParent.parent === null) {
              _self.root = parent
@@ -214,12 +216,21 @@ RedBlackTree.prototype = {
     }
 }
 
-// Test
-let myTree = new RedBlackTree();
-myTree.insert(40);
-myTree.insert(25);
-myTree.insert(78);
-myTree.insert(10);
-myTree.insert(32);
+// Test: 1 - Insert numbers in no particular order
+let myTree1 = new RedBlackTree();
+myTree1.insert(40);
+myTree1.insert(25);
+myTree1.insert(78);
+myTree1.insert(10);
+myTree1.insert(32);
+myTree1.inOrderTraversal(myTree1.root);
 
-myTree.inOrderTraversal(myTree.root);
+// Test: 2 - Insert numbers in ascending order
+let myTree2 = new RedBlackTree();
+myTree2.insert(1);
+myTree2.insert(2);
+myTree2.insert(3);
+myTree2.insert(4);
+myTree2.insert(5);
+myTree2.insert(6);
+myTree2.inOrderTraversal(myTree2.root);
