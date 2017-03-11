@@ -62,7 +62,7 @@ let heapSort = function (array) {
 
     array = maxHeapify(array);
 
-    while (lastArrayItem !== 0) {
+    while (lastArrayItem > 0) {
 
         tmp = array[lastArrayItem];
         array[lastArrayItem] = array[0];
@@ -93,16 +93,16 @@ console.log(maxHeapify([22,7,81,11,5,16,20,50,30,12]));
 console.log(maxHeapify([1,2,3,17,19,36,47,55,100]));
 
 // Test 6: Max Heapify an empty array
-//console.log(heapSort([]));
+console.log(heapSort([]));
 
 // Test 7: Max Heapify an array with just one item
-//console.log(heapSort([420]));
+console.log(heapSort([420]));
 
 // Test 8: Max Heapify an array of strings
-//console.log(heapSort(["blah", "meh", "hmm"]));
+console.log(heapSort(["blah", "meh", "hmm"]));
 
 // Test 9: Order randomly ordered array in ascending order
-//console.log(heapSort([22,7,81,11,5,16,20,50,30,12]))
+console.log(heapSort([22,7,81,11,5,16,20,50,30,12]))
 
 // Test 10: Order a decendingly ordered array in ascending order
-//console.log(heapSort([300,62,45,34,22,11,1,0]));
+console.log(heapSort([300,62,45,34,22,11,1,0]));
