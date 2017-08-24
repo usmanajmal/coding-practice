@@ -1,0 +1,61 @@
+import { Component, OnInit } from '@angular/core';
+import { Hero } from './hero';
+import { HeroService } from './hero.service';
+
+@Component({
+  selector: 'my-heroes',
+  //templateUrl: './app.component.html',
+  template: `
+    <h2>My Heroes</h2>
+    <ul class="heroes">
+      <li *ngFor="let hero of heroes"
+        [class.selected]="hero === selectedHero"
+        (click)="onSelect(hero)">
+        <span class="badge">{{hero.id}}</span> {{hero.name}}
+      </li>
+    </ul>
+    <hero-detail [hero]="selectedHero"></hero-detail>
+  `,
+  styleUrls: ['./app.component.css'],
+  // Providers tell Angular to make a fresh instance of HeroService when it creates AppComponent.
+  // The AppComponent as well as its child components can use that service to get hero data
+  // In other words, here we have defined HeroService as a Provider for the AppComponent
+  // providers: [HeroService]
+
+  // Remove HeroService from providers of HeroComponent because it is promoted and now its part of
+  // providers for AppComponent because this service will be needed in multiple child components of
+  // AppComponent
+  providers: []
+})
+export class HeroesComponent implements OnInit {
+  heroes: Hero[];
+  selectedHero: Hero;
+
+  // Parameter of following constructor simultaneously defines a private property named heroService and
+  // maintains it to be a HeroService injection. heroService instance should not be created via
+  // `heroService = new HeroService()`
+  constructor(private heroService: HeroService) {}
+
+  ngOnInit(): void {
+    this.getHeroes();
+  }
+  getHeroes(): void {
+    // Without Promise:
+    // this.heroes = this.heroService.getHeroes();
+
+    // With Promise:
+    // Callback sets the component's heroes property to the array of heroes returned by the service
+    this.heroService.getHeroes().then((heroes) => this.heroes = heroes)
+
+    // Arrow function expression has shorter syntax than a function expression and it does bind
+    // its on this, argument, super or new.target.
+    // Format:
+    //    (param1, param2,...,paramN) => { statements }
+    //    (param1, param2,...,paramN) => expression
+    //        Equivalent to (param1, param2,...,paramN) => { return expression; }
+  }
+
+  onSelect(hero: Hero): void {
+    this.selectedHero = hero;
+  }
+}
