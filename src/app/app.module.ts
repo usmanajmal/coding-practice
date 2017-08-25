@@ -1,10 +1,13 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 
 import { AppComponent } from './app.component';
 import { HeroDetailComponent } from './hero-detail.component';
 import { HeroesComponent } from './heroes.component';
+import { DashboardComponent } from './dashboard.component';
+
 import { HeroService } from './hero.service';
 
 @NgModule({
@@ -12,12 +15,35 @@ import { HeroService } from './hero.service';
     AppComponent,
     HeroDetailComponent,
     HeroesComponent, // this will help Angular know <my-heroes> tags
+    DashboardComponent
   ],
   imports: [
     BrowserModule,
-    FormsModule
+    FormsModule,
+    RouterModule.forRoot([
+      {
+        path: '',
+        redirectTo: '/dashboard',
+        pathMatch: 'full'
+      },
+      {
+        path: 'heroes',
+        component: HeroesComponent
+      },
+      {
+        path: 'dashboard',
+        component: DashboardComponent
+      },
+      {
+        path: 'detail/:id',
+        component: HeroDetailComponent
+      }
+    ])
   ],
-  providers: [HeroService],
-  bootstrap: [AppComponent]
+  providers: [ HeroService ],
+  bootstrap: [ AppComponent ]
 })
-export class AppModule { }
+export class AppModule {
+
+}
+
