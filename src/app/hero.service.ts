@@ -1,4 +1,8 @@
 import { Injectable } from '@angular/core';
+import { Headers, Http } from '@angular/http';
+
+import 'rxjs/add/operator/toPromise';
+
 import { Hero } from './hero';
 // Import Mock Data into the Service
 import { HEROES } from './mock-heroes';
@@ -6,12 +10,38 @@ import { HEROES } from './mock-heroes';
 @Injectable()
 
 export class HeroService {
+    // [Deprecated] Uncomment following to get heroes from mock
+    // getHeroes(): Promise<Hero[]> {
+    //     return Promise.resolve(HEROES);
+    // }
+    private heroesUrl = 'api/heroes';
+
+    constructor(private http: Http) { }
+
     getHeroes(): Promise<Hero[]> {
-        return Promise.resolve(HEROES);
+        return this.http.get(this.heroesUrl)
+            .toPromise()
+            .then(response => response.json().data as Hero[])
+            .catch(this.handleError);
     }
+    private handleError(error: any): Promise<any> {
+        console.error("Error Occurred", error);
+        return Promise.reject(error.message || error);
+    }
+    // [Deprecated] Uncomment following if you like to use mock
+    // Following does take all Heroes even though one hero was
+    // requested. In revised version of this method below we
+    // get only the Hero required via specification of its id
+    // getHero(id: Number): Promise<Hero> {
+    //     return this.getHeroes()
+    //         .then(heroes => heroes.find(hero => hero.id === id))
+    // }
     getHero(id: Number): Promise<Hero> {
-        return this.getHeroes()
-            .then(heroes => heroes.find(hero => hero.id === id))
+        const URL = `${this.heroesUrl}/${id}`;
+        return this.http.get(URL)
+            .toPromise()
+            .then(response => response.json().data as Hero)
+            .catch(this.handleError);
     }
     /**
      * Simulate server latency with 2 seconds delay
