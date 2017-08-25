@@ -2,21 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { Hero } from './hero';
 import { HeroService } from './hero.service';
 
+import { Router } from '@angular/router';
+
 @Component({
   selector: 'my-heroes',
-  //templateUrl: './app.component.html',
-  template: `
-    <h2>My Heroes</h2>
-    <ul class="heroes">
-      <li *ngFor="let hero of heroes"
-        [class.selected]="hero === selectedHero"
-        (click)="onSelect(hero)">
-        <span class="badge">{{hero.id}}</span> {{hero.name}}
-      </li>
-    </ul>
-    <hero-detail [hero]="selectedHero"></hero-detail>
-  `,
-  styleUrls: ['./app.component.css'],
+  templateUrl: './heroes.component.html',
+  styleUrls: ['./heroes.component.css'],
   // Providers tell Angular to make a fresh instance of HeroService when it creates AppComponent.
   // The AppComponent as well as its child components can use that service to get hero data
   // In other words, here we have defined HeroService as a Provider for the AppComponent
@@ -34,7 +25,9 @@ export class HeroesComponent implements OnInit {
   // Parameter of following constructor simultaneously defines a private property named heroService and
   // maintains it to be a HeroService injection. heroService instance should not be created via
   // `heroService = new HeroService()`
-  constructor(private heroService: HeroService) {}
+  constructor(
+    private router: Router,
+    private heroService: HeroService) { }
 
   ngOnInit(): void {
     this.getHeroes();
@@ -57,5 +50,9 @@ export class HeroesComponent implements OnInit {
 
   onSelect(hero: Hero): void {
     this.selectedHero = hero;
+  }
+
+  gotoDetail(): void {
+    //this.router.navigate(['/detail', this.selectedHero.id])
   }
 }
