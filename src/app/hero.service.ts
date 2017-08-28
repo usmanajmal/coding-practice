@@ -15,6 +15,8 @@ export class HeroService {
     //     return Promise.resolve(HEROES);
     // }
     private heroesUrl = 'api/heroes';
+    // For Update Hero details
+    private headers = new Headers({'Content-Type': 'application/json'});
 
     constructor(private http: Http) { }
 
@@ -51,4 +53,29 @@ export class HeroService {
             setTimeout(() => resolve(this.getHeroes()), 2000)
         })
     }
+
+    update(hero: Hero): Promise<Hero> {
+        const URL = `${this.heroesUrl}/${hero.id}`;
+        return this.http
+            .put(URL, JSON.stringify(hero), {headers: this.headers})
+            .toPromise()
+            .then(() => hero)
+            .catch(this.handleError);
+    }
+
+    create(name: string): Promise<Hero> {
+        return this.http
+          .post(this.heroesUrl, JSON.stringify({name: name}), {headers: this.headers})
+          .toPromise()
+          .then(res => res.json().data as Hero)
+          .catch(this.handleError);
+    }
+
+    delete(id: number): Promise<void> {
+        const url = `${this.heroesUrl}/${id}`;
+        return this.http.delete(url, {headers: this.headers})
+          .toPromise()
+          .then(() => null)
+          .catch(this.handleError);
+      }
 }
